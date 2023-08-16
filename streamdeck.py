@@ -1,7 +1,7 @@
-import tkinter as tk #arayüz oluşturucu
-import speech_recognition as sr #sesli kontrıl kütüphanesii
+import tkinter as tk 
+import speech_recognition as sr 
 import pyttsx3
-import webbrowser #chrome bağlan
+import webbrowser 
 import datetime
 
 def recognize_speech_for_search():
@@ -9,7 +9,7 @@ def recognize_speech_for_search():
     with sr.Microphone() as source:
         audio = r.listen(source)
 
-          try:
+    try:
         text = r.recognize_google(audio, language="tr-TR")
         search_text_entry.delete("1.0", tk.END)
         search_text_entry.insert(tk.END, text)
@@ -20,21 +20,21 @@ def recognize_speech_for_search():
     except sr.RequestError as e:
         search_text_entry.delete("1.0", tk.END)
         search_text_entry.insert(tk.END, "Ses tanıma servisine erişilemedi; {0}".format(e))
-#hatalara sonuç ata
+
 def text_to_speech(lang):
     text = search_text_entry.get("1.0", tk.END).strip()
     if text:
         engine = pyttsx3.init()
-        engine.setProperty("rate", 150)  # Ses hızını ayarlayabilirsin
-        engine.setProperty("volume", 0.8)  # Ses düzeyini ayarlayabilirsin
-        engine.setProperty("voice", lang)  # Seçilen dili ayarlar
+        engine.setProperty("rate", 150)  
+        engine.setProperty("volume", 0.8)  
+        engine.setProperty("voice", lang)  
         engine.say(text)
         engine.runAndWait()
         search_text_entry.delete("1.0", tk.END)
     else:
-        search_text_entry.delete("1.0", tk.END
-                                 
-                                 def speech_to_text():
+        search_text_entry.delete("1.0", tk.END)
+
+def speech_to_text():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         audio = r.listen(source)
@@ -74,7 +74,7 @@ def return_to_main_screen():
 def open_commands():
     global commands_window
     commands_window = tk.Toplevel(window)
-    commands_window.title("Komutlar") #komutlar sekmesi
+    commands_window.title("Komutlar")
 
     command_list = [
         {
@@ -97,5 +97,46 @@ def open_commands():
             "name": "Saat Göster",
             "action": show_time
         }
-        # Diğer komutları buraya ekleyebilirsiniz
+
     ]
+
+    for command in command_list:
+        command_button = tk.Button(
+            commands_window,
+            text=command["name"],
+            command=command["action"],
+            width=30
+        )
+        command_button.pack(pady=5)
+
+    commands_window.protocol("WM_DELETE_WINDOW", return_to_main_screen)
+
+
+window = tk.Tk()
+window.title("Sesi Yazıya ve Yazıyı Sese Çevirme")
+window.geometry("400x400") 
+window.resizable(False, False)
+
+
+search_text_entry = tk.Text(window, height=5, width=40)
+search_text_entry.pack(pady=20)
+
+search_button = tk.Button(window, text="Arama Yap", command=perform_search, width=15)
+search_button.pack(pady=10)
+
+
+
+
+speech_to_text_button = tk.Button(window, text="Sesi Yazıya Çevir", command=speech_to_text, width=15)
+speech_to_text_button.pack(pady=10)
+
+show_time_button = tk.Button(window, text="Saat Göster", command=show_time, width=15)
+show_time_button.pack(pady=10)
+
+commands_window = None
+
+command_button = tk.Button(window, text="Komutlar", command=open_commands, width=15)
+command_button.pack(pady=10)
+
+window.mainloop()
+
